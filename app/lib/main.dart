@@ -55,7 +55,13 @@ class MainPage extends StatelessWidget {
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                // Add navigation or action here
+                // navigate
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GoogleMapView(),
+                  ),
+                );
               },
               child: Text('Learn More'),
             ),

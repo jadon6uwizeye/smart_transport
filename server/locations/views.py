@@ -24,3 +24,25 @@ def destination(request, pk):
         send_sms(phone_number, message_content)
 
     return Response(phone_numbers, status=status.HTTP_200_OK)
+
+# send custom message to passengers
+@api_view(['POST'])
+def send_custom_message(request):
+    try:
+        phone_numbers = request.data['phone_numbers']
+        message_content = request.data['message_content']
+    except KeyError:
+        return Response({'message': 'Please provide phone_numbers and message_content'}, status=status.HTTP_400_BAD_REQUEST)
+    # send sms to all phone numbers in phone_numbers using send_sms function
+    for phone_number in phone_numbers:
+        # if phone number is in the format is +25XXXXXXXXXX as from instance.phone_number if it does not start with +25, add it
+        if not phone_number.startswith("+25"):
+            phone_number = "+25" + phone_number
+
+            print(phone_number)
+            
+        send_sms(phone_number, message_content)
+
+    return Response({
+        'message': 'Message sent successfully',
+    }, status=status.HTTP_200_OK)

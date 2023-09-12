@@ -13,6 +13,15 @@ class Destination(models.Model):
     def __str__(self):
         return self.name
 
+class Trip(models.Model):
+    name = models.CharField(max_length=100)
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    date = models.DateField(auto_created=True)
+    time = models.TimeField()
+
+    def __str__(self):
+        return self.name
+
 class Ticket(models.Model):
     TICKET_STATUS = (
         ('P', 'Pending'),
@@ -24,8 +33,10 @@ class Ticket(models.Model):
     email = models.CharField(max_length=100, null=True, blank=True)
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
     date = models.DateField(auto_created=True)
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
     time = models.TimeField()
     status = models.CharField(max_length=1, choices=TICKET_STATUS, default='P')
 
     def __str__(self):
         return self.name
+

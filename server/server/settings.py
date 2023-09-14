@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     'locations.apps.LocationsConfig',
     'rest_framework',
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,6 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS=[
     'http://localhost',
 ]
+
+# allow all hosts
+ALLOWED_HOSTS = ['*']

@@ -31,6 +31,8 @@ def send_custom_message(request):
     try:
         phone_numbers = request.data['phone_numbers']
         message_content = request.data['message_content']
+        print(phone_numbers)
+        print(message_content)
     except KeyError:
         return Response({'message': 'Please provide phone_numbers and message_content'}, status=status.HTTP_400_BAD_REQUEST)
     # send sms to all phone numbers in phone_numbers using send_sms function

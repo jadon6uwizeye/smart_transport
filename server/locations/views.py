@@ -3,14 +3,20 @@ from rest_framework.views import APIView
 # api endpoint to get destination and send sms to all phone numbers in Ticket table with that destination
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Destination, Ticket
+
+from locations.serializers import TicketSerializer
+from .models import Destination, Ticket, Trip
 from .send_sms import send_sms
 from rest_framework.decorators import api_view
 
 @api_view(['GET'])
 # csrf_exempt
 def destination(request, pk):
-    destination = Destination.objects.get(id=pk)
+    trip = request.query_params.get('trip', None)
+    if trip is not None:
+        destination = Destination.objects.get(id=pk, trip=trip)
+    else:
+        destination = Destination.objects.get(id=pk)
     tickets = Ticket.objects.filter(destination=destination)
     phone_numbers = [ticket.phone_number for ticket in tickets]
 
@@ -48,3 +54,20 @@ def send_custom_message(request):
     return Response({
         'message': 'Message sent successfully',
     }, status=status.HTTP_200_OK)
+
+# get all tickets for a particular trip
+@api_view(['GET'])
+def get_tickets(request):
+    trip = Trip.objects.filter(driver=request.user).last()
+    # get all destinations in trip
+    destinations = trip.destinations.all()
+    # get all tickets for each destination in destinations
+    response = {}
+    tickets = []
+    for destination in destinations:
+        response[destination.name] = TicketSerializer(Ticket.objects.filter(destination=destination, 
+                                                                            # and status is not completed
+                                                                            status__in=['O', 'P']
+                                                                            ), many=True).data
+
+    return Response(response, status=status.HTTP_200_OK)

@@ -1,6 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+User = get_user_model()
 
 class Destination(models.Model):
     name = models.CharField(max_length=100)
@@ -14,8 +15,9 @@ class Destination(models.Model):
         return self.name
 
 class Trip(models.Model):
-    name = models.CharField(max_length=100)
-    destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    driver = models.ForeignKey(User, on_delete=models.CASCADE)
+    destinations = models.ManyToManyField(Destination)
     date = models.DateField(auto_created=True)
     time = models.TimeField()
 

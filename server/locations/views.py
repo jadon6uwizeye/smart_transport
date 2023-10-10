@@ -17,8 +17,13 @@ def destination(request, pk):
         destination = Destination.objects.get(id=pk, trip=trip)
     else:
         destination = Destination.objects.get(id=pk)
-    tickets = Ticket.objects.filter(destination=destination)
+    tickets = Ticket.objects.filter(destination=destination, status__in=['O', 'P'])
     phone_numbers = [ticket.phone_number for ticket in tickets]
+
+    # set status of all tickets to completed
+    for ticket in tickets:
+        ticket.status = 'C'
+        ticket.save()
 
     # send sms to all phone numbers in phone_numbers using send_sms function
     for phone_number in phone_numbers:

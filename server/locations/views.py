@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from locations.serializers import TicketSerializer
+from .serializers import DestinationSerializer, TicketSerializer
 from .models import Destination, Ticket, Trip
 from .send_sms import send_sms
 from rest_framework.decorators import api_view
@@ -63,7 +63,11 @@ def send_custom_message(request):
 # get all tickets for a particular trip
 @api_view(['GET'])
 def get_tickets(request):
-    trip = Trip.objects.filter(driver=request.user).last()
+    try:
+        trip = Trip.objects.filter(driver=request.user).last()
+    except Trip.DoesNotExist:
+        return Response({'message': 'You have no trips'}, status=status.HTTP_404_NOT_FOUND)
+        
     # get all destinations in trip
     destinations = trip.destinations.all()
     # get all tickets for each destination in destinations
@@ -76,3 +80,18 @@ def get_tickets(request):
                                                                             ), many=True).data
 
     return Response(response, status=status.HTTP_200_OK)
+
+
+# get all destinations on trip
+@api_view(['GET'])
+def get_destinations(request):
+    try:
+        trip = Trip.objects.filter(driver=request.user).last()
+    except TypeError:
+        return Response({'message': 'You have no trips'}, status=status.HTTP_404_NOT_FOUND)
+    # get all destinations in trip
+    destinations = trip.destinations.all()
+    DestinationSerializer(destinations, many=True).data
+    
+
+    return Response(DestinationSerializer(destinations, many=True).data, status=status.HTTP_200_OK)

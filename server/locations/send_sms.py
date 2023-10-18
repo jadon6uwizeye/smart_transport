@@ -1,6 +1,8 @@
 from twilio.rest import Client
 import environ
 from pathlib import Path
+import requests
+
 
 def send_sms(phone_number, message_content):
     # Twilio Account SID and Auth Token from .env
@@ -11,17 +13,12 @@ def send_sms(phone_number, message_content):
     environ.Env.read_env(
         env_file=BASE_DIR / '.env'
     )
-    account_sid = env('TWILIO_ACCOUNT_SID')
-    auth_token = env('TWILIO_AUTH_TOKEN')
+    token=env('PINDO_API_KEY')
+    headers = {'Authorization': 'Bearer ' + token}
+    data = {'to' : phone_number, 'text' : message_content, 'sender' : 'Ticket Tracking App'}
 
-    # Create a Twilio client
-    client = Client(account_sid, auth_token)
+    url = 'https://api.pindo.io/v1/sms/'
+    response = requests.post(url, json=data, headers=headers)
+    print(response)
+    print(response.json())
 
-    # Send an SMS
-    message = client.messages.create(
-        body=message_content,
-        from_='+18148854564',
-        to=phone_number
-    )
-
-    return message.sid

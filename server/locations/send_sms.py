@@ -15,7 +15,7 @@ def send_sms(phone_number, message_content):
     )
     token=env('PINDO_API_KEY')
     headers = {'Authorization': 'Bearer ' + token}
-    data = {'to' : phone_number, 'text' : message_content, 'sender' : 'Ticket Tracking App'}
+    data = {'to' : phone_number, 'text' : message_content, 'sender' : 'Ticket '}
 
     url = 'https://api.pindo.io/v1/sms/'
     response = requests.post(url, json=data, headers=headers)

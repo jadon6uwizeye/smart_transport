@@ -106,7 +106,7 @@ class _MessagingWidgetState extends State<MessagingWidget> {
         'message_content': _messageController.text
       };
       var resp = await http.post(
-          Uri.parse('http://localhost:8001/location/send_custom_message/'),
+          Uri.parse('http://192.168.43.39:8001/location/send_custom_message/'),
           body: json.encode(jsonBody),
           headers: {
             // pass json as the content type

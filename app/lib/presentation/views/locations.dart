@@ -47,7 +47,7 @@ class _LocationMapState extends State<LocationMap> {
     var token = prefs.getString('token');
     print(token);
     final response = await http.get(
-      Uri.parse('http://localhost:8001/location/get_destinations/'),
+      Uri.parse('http://192.168.43.39:8001/location/get_destinations/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         // pass token from local storage
@@ -77,7 +77,7 @@ class _LocationMapState extends State<LocationMap> {
   // Function to call the API for a specific destinationId
   Future<void> _callAPIForDestination(int destinationId) async {
     final response = await http
-        .get(Uri.parse('http://localhost:8001/location/$destinationId/'));
+        .get(Uri.parse('http://192.168.43.39:8001/location/$destinationId/'));
 
     if (response.statusCode == 200) {
       // Handle the response as needed

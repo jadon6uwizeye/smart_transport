@@ -65,11 +65,12 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         print("\n\n\n\n\nSending request");
         // send to backend endpoint
-        var resp = await http
-            .post(Uri.parse('http://localhost:8001/accounts/login/'), body: {
-          'username': usernameController.text,
-          'password': passwordController.text
-        });
+        var resp = await http.post(
+            Uri.parse('http://192.168.43.39:8001/accounts/login/'),
+            body: {
+              'username': usernameController.text,
+              'password': passwordController.text
+            });
         print(resp.body);
         var json_resp = json.decode(resp.body);
         if (resp.statusCode == 200) {

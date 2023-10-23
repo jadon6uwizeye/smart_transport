@@ -21,7 +21,7 @@ class _PassengersToGetOffListState extends State<PassengersToGetOffList> {
     var token = prefs.getString('token');
     print(token);
     final response = await http.get(
-      Uri.parse('http://localhost:8001/location/get_tickets/'),
+      Uri.parse('http://192.168.43.39:8001/location/get_tickets/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         // pass token from local storage

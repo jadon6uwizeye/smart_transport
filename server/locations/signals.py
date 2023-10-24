@@ -12,5 +12,5 @@ def send_sms_on_ticket_creation(sender, instance, created, **kwargs):
         if not instance.phone_number.startswith("+25"):
             instance.phone_number = "+25" + instance.phone_number
 
-        message_content = f"Hello {instance.name}, \nyour ticket to {instance.destination.name} has been booked. The date of travel is {instance.date} and the time is {instance.time}."
+        message_content = f"Hello {instance.name}, \nyour ticket to {instance.destination.name} has been booked. The date of travel is {instance.date} and the time is {instance.time} and The driver will be {instance.trip.driver}  and the Bus will be with Plate {instance.trip.plate_number}."
         send_sms(instance.phone_number, message_content)

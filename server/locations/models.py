@@ -17,6 +17,7 @@ class Destination(models.Model):
 class Trip(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     driver = models.ForeignKey(User, on_delete=models.CASCADE)
+    plate_number = models.CharField(max_length=100, default='RAC 123 A')
     destinations = models.ManyToManyField(Destination)
     date = models.DateField(auto_created=True)
     time = models.TimeField()

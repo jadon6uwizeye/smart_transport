@@ -39,13 +39,15 @@ def destination(request, pk):
 # send custom message to passengers
 @api_view(['POST'])
 def send_custom_message(request):
+    # get tickets where trip driver is request.user and status is not completed
+    tickets = Ticket.objects.filter(trip__driver=request.user, status__in=['O', 'P'])
+    # get phone numbers of all tickets
+    phone_numbers = [ticket.phone_number for ticket in tickets]
     try:
-        phone_numbers = request.data['phone_numbers']
         message_content = request.data['message_content']
-        print(phone_numbers)
         print(message_content)
     except KeyError:
-        return Response({'message': 'Please provide phone_numbers and message_content'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Please provide message_content'}, status=status.HTTP_400_BAD_REQUEST)
     # send sms to all phone numbers in phone_numbers using send_sms function
     for phone_number in phone_numbers:
         # if phone number is in the format is +25XXXXXXXXXX as from instance.phone_number if it does not start with +25, add it
@@ -76,9 +78,9 @@ def get_tickets(request):
     for destination in destinations:
         response[destination.name] = TicketSerializer(Ticket.objects.filter(destination=destination, 
                                                                             # and status is not completed
-                                                                            status__in=['O', 'P']
+                                                                            # status__in=['O', 'P']
                                                                             ), many=True).data
-
+    # add total number of tickets, those with status C and pending or O from the response
     return Response(response, status=status.HTTP_200_OK)
 
 

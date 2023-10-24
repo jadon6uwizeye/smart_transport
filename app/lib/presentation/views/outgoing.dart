@@ -15,6 +15,9 @@ class _PassengersToGetOffListState extends State<PassengersToGetOffList> {
   var locations;
   // List of location names
   var passengers;
+  int totalPassengers = 0;
+  int passengersWithStatusC = 0;
+  int passengersWithOtherStatus = 0;
 
   void _fetch_locations() async {
     var prefs = await SharedPreferences.getInstance();
@@ -35,6 +38,16 @@ class _PassengersToGetOffListState extends State<PassengersToGetOffList> {
       print("here");
       setState(() {
         locations = json_response;
+        locations.forEach((destination, passengers) {
+          passengers.forEach((passenger) {
+            totalPassengers++;
+            if (passenger['status'] == 'C') {
+              passengersWithStatusC++;
+            } else {
+              passengersWithOtherStatus++;
+            }
+          });
+        });
       });
       print("check");
     } else {
@@ -59,40 +72,123 @@ class _PassengersToGetOffListState extends State<PassengersToGetOffList> {
         // change the app bar height
         toolbarHeight: 70,
       ),
-      body: locations != null
-          // && passengers != null
-          ? ListView.builder(
-              itemCount: locations.length,
-              itemBuilder: (context, index) {
-                final location = locations.keys.toList()[index];
-                final passengerList = locations[location];
+      body: Column(
+        children: [
+          locations != null
+              // && passengers != null
+              ? Expanded(
+                  child: ListView.builder(
+                    itemCount: locations.length,
+                    itemBuilder: (context, index) {
+                      final location = locations.keys.toList()[index];
+                      final passengerList = locations[location];
 
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  child: ListTile(
-                    title: Text(
-                      location,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: passengerList.isNotEmpty
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: passengerList
-                                .map<Widget>((passenger) =>
-                                    Text("  ${passenger['name']}"))
-                                .toList(),
-                          )
-                        : Text("No passengers to get off."),
+                      return Card(
+                        margin:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        child: ListTile(
+                          title: Text(
+                            location,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: passengerList.isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: passengerList
+                                      .map<Widget>((passenger) => RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      " ${passenger['name']}      - ",
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Colors
+                                                        .black, // Always black for 'name'
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      passenger['status'] == 'C'
+                                                          ? ' ✅  Arrived'
+                                                          : '',
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: passenger[
+                                                                'status'] ==
+                                                            'C'
+                                                        ? Colors.green
+                                                        : Colors
+                                                            .black, // Black for 'arrived' part
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ))
+                                      .toList()
+
+                                  // Display passenger name and if status is C display "Confirmed" else display "Not Confirmed"
+                                  // .map<Widget>((passenger) => Text(
+                                  //     "  ${passenger['name']} - ${passenger['status'] == 'C' ? 'Confirmed' : 'Not Confirmed'}"))
+                                  // .toList(),
+                                  )
+                              : Text("No passengers to get off."),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            )
-          : Center(
-              child: Text("No passengers to get off."),
+                )
+              : Center(
+                  child: Text("No passengers to get off."),
+                ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
             ),
+            padding: EdgeInsets.all(20),
+            margin: EdgeInsets.all(10),
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.black, fontSize: 18),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: "Total Passengers : ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: "$totalPassengers\n",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  TextSpan(
+                    text: "Passengers who have arrived : ",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text: "$passengersWithStatusC\n",
+                    style: TextStyle(color: Colors.green),
+                  ),
+                  TextSpan(
+                    text: "Passengers Still Going : ",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text: "$passengersWithOtherStatus",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

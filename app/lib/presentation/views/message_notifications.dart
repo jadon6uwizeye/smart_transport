@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Message {
   final String text;
@@ -100,17 +101,18 @@ class _MessagingWidgetState extends State<MessagingWidget> {
 
   void handleMessageSubmit(String message) async {
     final messageText = _messageController.text;
+    var prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+
     if (messageText.isNotEmpty) {
-      var jsonBody = {
-        'phone_numbers': ['0789952243'],
-        'message_content': _messageController.text
-      };
+      var jsonBody = {'message_content': _messageController.text};
       var resp = await http.post(
           Uri.parse('http://192.168.43.39:8001/location/send_custom_message/'),
           body: json.encode(jsonBody),
           headers: {
             // pass json as the content type
             "Content-Type": "application/json",
+            'Authorization': 'Bearer $token',
           });
       print(resp.body);
       setState(() {

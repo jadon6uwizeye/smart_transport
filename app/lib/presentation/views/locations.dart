@@ -66,7 +66,7 @@ class _LocationMapState extends State<LocationMap> {
       for (int destinationId in destinationIds) {
         await _callAPIForDestination(destinationId);
         // delay for 4 seconds
-        await Future.delayed(Duration(seconds: 4));
+        await Future.delayed(Duration(minutes: 4));
       }
     } else {
       // Handle error

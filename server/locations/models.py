@@ -23,7 +23,7 @@ class Trip(models.Model):
     time = models.TimeField()
 
     def __str__(self):
-        return self.name
+        return f'{self.name + " "+ self.plate_number}'
 
 class Ticket(models.Model):
     TICKET_STATUS = (

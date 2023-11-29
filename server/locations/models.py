@@ -33,6 +33,7 @@ class Ticket(models.Model):
     )
     name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=100)
+    driver_phone_number = models.CharField(max_length=15)
     email = models.CharField(max_length=100, null=True, blank=True)
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
     date = models.DateField(auto_created=True)
